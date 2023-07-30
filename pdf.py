@@ -33,6 +33,13 @@ class PDF(QWidget):
         for i in range(len(self.Widgets)):
             layout.addWidget(self.Widgets[i])
 
+        for i in range(len(self.Widgets)):
+            h_layout = QHBoxLayout()
+            widget = self.Widgets[i]
+
+            if isinstance(widget, (QLabel, QLineEdit)):
+                widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+
         self.input_file.clicked.connect(self.choose)
         self.create.clicked.connect(self.input_pages)
 
