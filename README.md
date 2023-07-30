@@ -1,9 +1,9 @@
 <h1 style="text-align:center;">PDF Creator</h1>
 
 <p style="text-align:center;">The idea of PDF Creator originated when I asked myself how I could create PDF files from an existing PDF file. I wanted to be able to extract specific pages or a range of pages and combine them into an entirely new file. Despite extensive searching, I couldn't find any tool, especially a simple one, that could fulfill my requirements. So, I decided to take matters into my own hands and create one myself, offering it freely to the community.
-
-![Alt Text][https://github.com/avivper/PDF-Creator/blob/main/app.png]
 </p>
+
+(https://github.com/avivper/PDF-Creator/blob/main/app.png)
 
 <h2 style="text-align:center;">Purpose</h2>
 
