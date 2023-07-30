@@ -1,5 +1,8 @@
+import os.path
+
 import PyPDF2
 import sys
+from time import sleep
 from PyQt5.QtWidgets import *
 
 
@@ -29,7 +32,7 @@ class PDF(QWidget):
         self.input_file = QPushButton("Browse")
 
         # Output
-        self.output = QLabel("Enter the name for your new PDF file: ")
+        self.output = QLabel("Enter the name for your new PDF file:\n(Without .pdf)")
         self.output_text = QLineEdit()
 
         # Create button
@@ -67,47 +70,68 @@ class PDF(QWidget):
             self.input_text.setText(file_path)
 
     def input_pages(self):
-        text, start_pressed = QInputDialog.getText(
-            self, "Enter the pages number",
-            "Type an integer, list of numbers (Make sure it has spaces between them)\n"
-            "Or Type a page number until the page number do you want, for instance: '1-10'"
-        )
+        if self.input_text.text().strip():  # Check if the text input is not null
+            if self.output_text.text().strip():  # Also checking the output name text if it's not null
 
-        if start_pressed:
-            if text:
-                page_list = []
+                pdf_file = self.input_text.text().strip()  # This variable contains the string path data
 
-                for item in text.split():
-                    if "-" in item:
-                        start, end = item.split("-")
-                        page_list.extend(
-                            range(int(start),
-                                  int(end) + 1)
-                        )
+                # Checking if the file exists and if it's a pdf file
+                if os.path.exists(pdf_file) and os.path.splitext(pdf_file)[1].lower() == ".pdf":
+
+                    # The input window that is awaiting the user's input
+                    text, start_pressed = QInputDialog.getText(
+                        self, "Enter the page numbers", "Please type one integer, "
+                        "list of numbers (Make sure it has spaces between them)\n"
+                        "or enter the range of pages do you want, for instance: '1-10'"
+                    )
+
+                    if start_pressed:  # If start_pressed is true, or if the user clicked on OK
+                        if text:   # Checking if the text field is not empty
+
+                            page_list = []  # a local list ot contain that will contain the input from the user
+
+                            for item in text.split():  # For each number in the input
+                                if "-" in item:  # If the user chose range of numbers
+                                    start, end = item.split("-")
+                                    page_list.extend(  # convert start number from string to int, also end
+                                        range(int(start), int(end) + 1)
+                                    )
+                                else: # If the user chose various numbers
+                                    page_list.append(int(item))
+
+                            self.pages = page_list  # assign the numbers to the public class list
+                            self.start()  # execute the method
+
+                        else:
+                            QMessageBox.warning(self, "Warning",
+                                                "You must enter at least one number.")
                     else:
-                        page_list.append(int(item))
-
-                self.pages = page_list
-                print(f"User input pages: {self.pages}")
-                self.start()
+                        return False
+                else:
+                    QMessageBox.warning(self, "Invalid PDF file",
+                                        "Please select a valid PDF file")
             else:
-                print("You must enter at least one number.")
+                QMessageBox.warning(self, "Invalid name",
+                                    "Please enter a name for your new file")
         else:
-            print("Canceled")
+            QMessageBox.warning(self, "Invalid name",
+                                "Please select a PDF file")
 
     def start(self):
         elements = [self.output_text.text(),
                     self.input_text.text(), self.pages]
 
-        for i in elements:
+        for i in elements:  # Checks again if the data is not null
             if i is None:
-                return False
+                QMessageBox.error(self, "Invalid Data", "Please try again")
 
-        name = elements[0] + ".pdf"
-        pdf_file = elements[1]
+        name = elements[0] + ".pdf"  # assigned the file type according to the user's input
+        pdf_file = elements[1]  # User file path
         selected_pages = elements[2]
 
         create(pdf_file, name, selected_pages)
+        sleep(1)
+        QMessageBox.information(self, "Success", "PDF Created successfully!")
 
 
 if __name__ == '__main__':
