@@ -11,6 +11,8 @@
 
 <p style="text-align:center;">Feel free to contribute to this project and enhance its capabilities!</p>
 
-<h2 style="text-align:center;">Installation</h2>
+<h2 style="text-align:center;">Download</h2>
 
-<p style="text-align:center;">Soon.</p>
+<p style="text-align:center;">
+  <a href= "https://github.com/avivper/PDF-Creator/releases/tag/PDF-Creator">Download</a>
+</p>
