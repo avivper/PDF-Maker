@@ -2,6 +2,8 @@ import os
 import PyPDF2
 import sys
 from time import sleep
+
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import *
 
 
@@ -31,14 +33,13 @@ class PDF(QWidget):
         layout = QVBoxLayout()
 
         for i in range(len(self.Widgets)):
-            layout.addWidget(self.Widgets[i])
-
-        for i in range(len(self.Widgets)):
-            h_layout = QHBoxLayout()
             widget = self.Widgets[i]
+            layout.addWidget(self.Widgets[i])
 
             if isinstance(widget, (QLabel, QLineEdit)):
                 widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+                font = QFont("Arial", 11)  # Specify font name and size
+                widget.setFont(font)  # Apply the font to the widget
 
         self.input_file.clicked.connect(self.choose)
         self.create.clicked.connect(self.input_pages)
