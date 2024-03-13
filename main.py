@@ -46,6 +46,16 @@ class Table(QWidget):
         self.setLayout(self.layout)
 
 
+class Confirmation(QMessageBox):
+    def __init__(self, parent=None):
+        super(QMessageBox, self).__init__(parent)
+        self.setIcon(QMessageBox.Question)
+        self.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+    def confirm(self, text):
+        self.setText(text)
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Main()

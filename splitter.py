@@ -1,4 +1,4 @@
-import os.path
+import os
 
 import PyPDF2
 from PyQt5.QtWidgets import *
