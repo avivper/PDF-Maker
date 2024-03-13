@@ -12,7 +12,7 @@ class Unifier(QWidget):
 
         self.layout = QVBoxLayout(self)
 
-        # Create 2 LineEdit(), in Parallel to input 2 path and will unify them
+        # todo: Create 2 LineEdit(), in Parallel to input 2 path and will unify them
 
         # 2 Input in parallel
         self.input = QLabel("Select two PDF files to unify ")
@@ -24,11 +24,11 @@ class Unifier(QWidget):
         self.output = QLabel("Enter the name for your new PDF file:\n(Without .pdf)")
         self.output_text = QLineEdit()  # Textfield of output new file
 
-        self.create = QPushButton("Unify")
+        self.unify = QPushButton("Unify")
 
         self.Widgets = [
             self.input, self.input_1, self.input_2, self.browse,
-            self.output, self.output_text, self.create
+            self.output, self.output_text, self.unify
         ]
 
         self.init()
@@ -44,6 +44,7 @@ class Unifier(QWidget):
                 widget.setFont(font)
 
         self.browse.clicked.connect(self.choose)
+        self.unify.clicked.connect(self.execute_unify)
         self.setLayout(self.layout)
 
     def choose(self):
@@ -52,20 +53,25 @@ class Unifier(QWidget):
         )
 
         if file_path:
-            self.input_path(file_path)
+            self.embed_path(file_path)
 
-    def input_path(self, file_path):
-        option_dialog = RadioInput()
-        selected_option = option_dialog.get_option()
-        parse_option = option_dialog.parse_input()
+    def embed_path(self, file_path):
+        embed = RadioInput()
+        option = embed.parse_input()
 
-        if selected_option:
-            print(f"{selected_option}, \n" + file_path)
+        if option:
             self.input_1.setText(file_path)
+        elif option is False:
+            self.input_2.setText(file_path)
+        else:
+            return
 
-        if parse_option:
-            print(f"{parse_option}")
+    def execute_unify(self):
+        if self.input_1.text() == self.input_2.text():
+            return  # todo: create option dialog to unify the same file
 
+
+# todo: create method to check the input name for the new file
 
 class RadioInput(QDialog):
     def __init__(self, parent=None):
@@ -74,7 +80,9 @@ class RadioInput(QDialog):
         self.setWindowTitle("Input")
 
         self.layout = QVBoxLayout(self)
-        self.form_layout = QFormLayout()
+        self.form_layout = QFormLayout(self)
+
+        self.file = None
 
         self.input_1 = QRadioButton("File 1")
         self.input_2 = QRadioButton("File 2")
@@ -92,20 +100,22 @@ class RadioInput(QDialog):
         self.layout.addLayout(self.form_layout)
         self.layout.addLayout(self.buttons_layout)
 
-        self.select_button.clicked.connect(self.get_option)
+        self.select_button.clicked.connect(self.return_option)
         self.cancel_button.clicked.connect(self.reject)
 
-    def get_option(self):
+    def return_option(self):
         if self.input_1.isChecked():
-            return True
+            self.file = True
         elif self.input_2.isChecked():
-            return False
+            self.file = False
         else:
-            self.reject()
+            return None
+
+        self.accept()
 
     def parse_input(self):
         result = self.exec_()
         if result == QDialog.Accepted:
-            return self.result()
+            return self.file
 
         return None
