@@ -1,6 +1,7 @@
 import sys
 import splitter
 import unifier
+import converter
 
 from PyQt5.QtWidgets import *
 
@@ -33,11 +34,13 @@ class Table(QWidget):
         self.tabs = QTabWidget()
         self.splitter = splitter.Splitter()
         self.unifier = unifier.Unifier()
+        self.converter = converter.Converter()
 
         self.tabs.resize(600, 600)
 
         self.tabs.addTab(self.splitter, "Splitter")
         self.tabs.addTab(self.unifier, "Unifier")
+        self.tabs.addTab(self.converter, "Converter")
 
         self.init()
 

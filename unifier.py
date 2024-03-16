@@ -30,7 +30,7 @@ class Unifier(QWidget):
         self.Widgets = [
             self.input, self.file_1, self.input_1, self.file_2, self.input_2, self.browse,
             self.output, self.output_text, self.unify
-        ]
+        ]  # input_1 [2], self.input[4], self.output_text[7]
 
         self.init()
         print(self.output_text.text())
@@ -48,6 +48,11 @@ class Unifier(QWidget):
         self.browse.clicked.connect(self.choose)
         self.unify.clicked.connect(self.execute)
         self.setLayout(self.layout)
+
+    def clear(self):
+        self.output_text.clear()
+        self.input_1.clear()
+        self.input_2.clear()
 
     def choose(self):
         file_path, _ = QFileDialog.getOpenFileName(
@@ -72,32 +77,26 @@ class Unifier(QWidget):
             return
 
     def execute(self):
-        if self.input_1.text().strip() and self.input_2.text().strip():
-            if self.output_text.text().strip():
+        if self.input_1.text().strip() and self.input_2.text().strip() and self.output_text.text().strip():
+            filename = self.generate_str()
 
-                file_1 = self.input_1.text().strip()
-                file_2 = self.input_2.text().strip()
-                filename = self.generate_str()
+            if self.input_1.text().strip() == self.input_2.text().strip():
+                confirmation = main.Confirmation()
+                confirmation.confirm("You chose the same file, are you sure to proceed?")
+                confirm = confirmation.exec_()
 
-                if file_1 == file_2:  # Work
-                    confirmation = main.Confirmation()
-                    confirmation.confirm("You chose the same file, are you sure to proceed?")
-                    confirm = confirmation.exec_()
-
-                    if confirm:
-                        self.merger(file_1, file_2, filename)
-                    else:
-                        return
+                if confirm:
+                    self.merger(self.input_1.text().strip(), self.input_2.text().strip(), filename)
                 else:
-                    self.merger(file_1, file_2, filename)
+                    return
             else:
-                QMessageBox.warning(self, "Invalid name", "Please enter a name for your new file",
-                                    QMessageBox.Ok)
+                self.merger(self.input_1.text().strip(), self.input_2.text().strip(), filename)
         else:
-            QMessageBox.warning(self, "Invalid name", "Please select two PDF files",
+            QMessageBox.warning(self, "Invalid", "Please fill all the blank lines",
                                 QMessageBox.Ok)
 
     def merger(self, input_1, input_2, output_name):
+        confirmation = main.Confirmation()
         merger = PyPDF2.PdfMerger()
 
         folder = "Created PDF"
@@ -124,12 +123,21 @@ class Unifier(QWidget):
         with open(output_path, 'wb') as merged_file:
             merger.write(merged_file)
 
-        QMessageBox.information(
-            self, "Success", "PDF Created successfully!",
-            QMessageBox.Ok
-        )
+        confirmation.confirm("PDF Created successfully, clear the input lines?")
+        confirm = confirmation.exec_()
 
-        self.output_text.clear()
+        if confirm:  # clears input_1 [2], self.input[4], self.output_text[7]
+            i = 2
+            while i < len(self.Widgets):
+                if i == 2 or i == 4:
+                    self.Widgets[i].clear()
+                    i += 2
+                elif i == 6:
+                    i += 1
+                    self.Widgets[i].clear()
+                    return
+        else:
+            return
 
 
 class RadioInput(QDialog):
