@@ -1,9 +1,8 @@
-import sys
-import splitter
 import unifier
+import splitter
 import converter
-
 from PyQt5.QtWidgets import *
+import sys
 
 
 class Main(QMainWindow):

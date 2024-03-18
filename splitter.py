@@ -1,9 +1,9 @@
 import os
-
 import PyPDF2
+
+from time import sleep
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont
-from time import sleep
 
 
 class Splitter(QWidget):
@@ -27,20 +27,20 @@ class Splitter(QWidget):
         self.Widgets = [
             self.input, self.input_text, self.input_file,
             self.output, self.output_text, self.create
-        ]
+        ]  # List to create the widgets in
 
         self.init()
 
     def init(self):
-        # Creating UI
+        # Creating the UI
         for i in range(len(self.Widgets)):
             widget = self.Widgets[i]
             self.layout.addWidget(self.Widgets[i])
 
             if isinstance(widget, (QLabel, QLineEdit)):
                 widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-                font = QFont("Arial", 11)
-                widget.setFont(font)
+                font = QFont("Arial", 11)  # Specify font name and size
+                widget.setFont(font)  # Apply the font to the widget
 
         self.setLayout(self.layout)
 
@@ -58,7 +58,7 @@ class Splitter(QWidget):
     def generate_str(self):
         return self.output_text.text() + ".pdf"
 
-    def execute(self):
+    def execute(self):  # Will execute and check if both lines with an input
         if self.input_text.text().strip():
             if self.output_text.text().strip():
 
@@ -71,7 +71,7 @@ class Splitter(QWidget):
             QMessageBox.warning(self, "Invalid name", "Please select a PDF file",
                                 QMessageBox.Ok)
 
-    def check_pdf(self, pdf_file):
+    def check_pdf(self, pdf_file):  # Will generate the PDF based on the input
         if os.path.exists(pdf_file) and os.path.splitext(pdf_file)[1].lower() == ".pdf":
             text, start_pressed = QInputDialog.getText(
                 self, "Enter the page numbers",
@@ -97,7 +97,7 @@ class Splitter(QWidget):
                 "Please select a valid PDF file", QMessageBox.Ok
             )
 
-    def pdf_list(self, text):
+    def pdf_list(self, text):  # Generating the list of numbers
         page_list = []
 
         for item in text.split():
@@ -133,7 +133,7 @@ class Splitter(QWidget):
 
                 return
 
-    def create_pdf(self, input_pdf_path, output_name, page_numbers):
+    def create_pdf(self, input_pdf_path, output_name, page_numbers):  # Creating the file
         pdf_writer = PyPDF2.PdfWriter()
         folder = "Created PDF"
 

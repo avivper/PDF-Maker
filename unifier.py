@@ -1,8 +1,7 @@
-import os
-import PyPDF2
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QFont
-import main
+from main import Confirmation
+from splitter import PyPDF2, os
 
 
 class Unifier(QWidget):
@@ -30,10 +29,9 @@ class Unifier(QWidget):
         self.Widgets = [
             self.input, self.file_1, self.input_1, self.file_2, self.input_2, self.browse,
             self.output, self.output_text, self.unify
-        ]  # input_1 [2], self.input[4], self.output_text[7]
+        ]
 
         self.init()
-        print(self.output_text.text())
 
     def init(self):
         for i in range(len(self.Widgets)):
@@ -49,7 +47,7 @@ class Unifier(QWidget):
         self.unify.clicked.connect(self.execute)
         self.setLayout(self.layout)
 
-    def clear(self):
+    def clear(self):  # Clears the inputs, will call if the user choose to clear
         self.output_text.clear()
         self.input_1.clear()
         self.input_2.clear()
@@ -65,7 +63,7 @@ class Unifier(QWidget):
     def generate_str(self):
         return self.output_text.text() + ".pdf"
 
-    def embed_path(self, file_path):
+    def embed_path(self, file_path):   # Set the file on QLineedit based on user's choice
         embed = RadioInput()
         option = embed.parse_input()
 
@@ -76,12 +74,12 @@ class Unifier(QWidget):
         else:
             return
 
-    def execute(self):
+    def execute(self):  # Execute the merge algorithm
         if self.input_1.text().strip() and self.input_2.text().strip() and self.output_text.text().strip():
             filename = self.generate_str()
 
             if self.input_1.text().strip() == self.input_2.text().strip():
-                confirmation = main.Confirmation()
+                confirmation = Confirmation()
                 confirmation.confirm("You chose the same file, are you sure to proceed?")
                 confirm = confirmation.exec_()
 
@@ -95,8 +93,8 @@ class Unifier(QWidget):
             QMessageBox.warning(self, "Invalid", "Please fill all the blank lines",
                                 QMessageBox.Ok)
 
-    def merger(self, input_1, input_2, output_name):
-        confirmation = main.Confirmation()
+    def merger(self, input_1, input_2, output_name):  # Merge the files
+        confirmation = Confirmation()
         merger = PyPDF2.PdfMerger()
 
         folder = "Created PDF"
@@ -107,7 +105,7 @@ class Unifier(QWidget):
         output_path = os.path.join(folder, output_name)
 
         if os.path.exists(output_path):
-            choice = main.Confirmation()
+            choice = Confirmation()
             choice.confirm(f"File already exists, Are you sure you want to replace {output_name}?")
             result = choice.exec_()
 
@@ -126,16 +124,8 @@ class Unifier(QWidget):
         confirmation.confirm("PDF Created successfully, clear the input lines?")
         confirm = confirmation.exec_()
 
-        if confirm:  # clears input_1 [2], self.input[4], self.output_text[7]
-            i = 2
-            while i < len(self.Widgets):
-                if i == 2 or i == 4:
-                    self.Widgets[i].clear()
-                    i += 2
-                elif i == 6:
-                    i += 1
-                    self.Widgets[i].clear()
-                    return
+        if confirm:  # clears the lines
+            self.clear()
         else:
             return
 
